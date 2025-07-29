@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { getProjects, createProject } from '../api';
+import { getProjects, createProject, shareProject } from '../api';
 
 export default function ProjectDashboard({ onSelect }) {
   const [projects, setProjects] = useState([]);
   const [name, setName] = useState('');
+  const [shareUser, setShareUser] = useState('');
 
   useEffect(() => {
     getProjects().then(res => {
@@ -18,11 +19,24 @@ export default function ProjectDashboard({ onSelect }) {
     });
   };
 
+  const handleShare = (p) => {
+    shareProject(p, shareUser).then(() => setShareUser(''));
+  };
+
   return (
     <div>
       <h2>Projects</h2>
       {projects.map(p => (
-        <button key={p} onClick={() => onSelect(p)}>{p}</button>
+        <div key={p} style={{ marginBottom: '0.5rem' }}>
+          <button onClick={() => onSelect(p)}>{p}</button>
+          <input
+            style={{ marginLeft: '0.5rem' }}
+            placeholder="Share with user"
+            value={shareUser}
+            onChange={e => setShareUser(e.target.value)}
+          />
+          <button onClick={() => handleShare(p)}>Share</button>
+        </div>
       ))}
       <input
         value={name}
