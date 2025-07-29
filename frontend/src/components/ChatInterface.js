@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { sendQuery } from '../api';
 
-export default function ChatInterface() {
+export default function ChatInterface({ project }) {
   const [prompt, setPrompt] = useState('');
   const [response, setResponse] = useState('');
+  const [includeFiles, setIncludeFiles] = useState(false);
 
   const handleSend = async () => {
-    const res = await sendQuery(prompt);
-    setResponse(res.data);
+    const res = await sendQuery(prompt, project, includeFiles);
+    setResponse(res.data.response || res.data);
   };
 
   return (
@@ -21,6 +22,16 @@ export default function ChatInterface() {
         placeholder="Ask GPT something..."
       />
       <br />
+      <div>
+        <label>
+          <input
+            type="checkbox"
+            checked={includeFiles}
+            onChange={e => setIncludeFiles(e.target.checked)}
+          />
+          Include project files
+        </label>
+      </div>
       <button onClick={handleSend}>Send</button>
       <pre>{response}</pre>
     </div>
